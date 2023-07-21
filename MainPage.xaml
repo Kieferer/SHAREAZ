@@ -30,7 +30,14 @@
 
             <Button
                 x:Name="CounterBtn"
-                Text="Click me"
+                Text="Send"
+                SemanticProperties.Hint="Counts the number of times you click"
+                Clicked="OnCounterClicked"
+                HorizontalOptions="Center" />
+            
+            <Button
+                x:Name="ReceiveBtn"
+                Text="Receive"
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center" />
