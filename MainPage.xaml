@@ -27,20 +27,21 @@
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                 FontSize="18"
                 HorizontalOptions="Center" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Send"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+            <HorizontalStackLayout>
+                <Button
+                    x:Name="CounterBtn"
+                    Text="Send"
+                    SemanticProperties.Hint="Counts the number of times you click"
+                    Clicked="OnCounterClicked"
+                    HorizontalOptions="Center" />
             
-            <Button
-                x:Name="ReceiveBtn"
-                Text="Receive"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+                <Button
+                    x:Name="ReceiveBtn"
+                    Text="Receive"
+                    SemanticProperties.Hint="Counts the number of times you click"
+                    Clicked="OnCounterClicked"
+                    HorizontalOptions="Center" />
+            </HorizontalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
