@@ -12,9 +12,10 @@ namespace SHAREAZ.Services
 {
     public static class FileReceiver
     {
-        public static string PERCENTAGE = String.Empty;
+        public static string PERCENTAGE_STRING;
+        public static double PERCENTAGE_DOUBLE;
         private readonly static int PORT = 9999;
-        public static async void Receive(string saveDirectoryPath)
+        public static async void Receive(ProgressBar progressBar, string saveDirectoryPath)
         {
             IPAddress ipAddress = IPAddress.Any;
             TcpListener listener = new(ipAddress, PORT);
@@ -38,14 +39,14 @@ namespace SHAREAZ.Services
             long totalBytesRead = 0;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            Debug.WriteLine(fileSize * 100 == fileStream.Length);
             while ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
                 await fileStream.WriteAsync(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                double progressPercentage = (double)totalBytesRead / fileSize * 100;
-                PERCENTAGE = $"{progressPercentage:F2}%";
+                PERCENTAGE_DOUBLE = (double)totalBytesRead / fileSize * 100;
+                PERCENTAGE_STRING = $"{PERCENTAGE_DOUBLE:F2}%";
+                progressBar.Progress = PERCENTAGE_DOUBLE;
             }
 
             stopwatch.Stop();
