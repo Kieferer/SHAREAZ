@@ -1,13 +1,9 @@
 ﻿using System.Diagnostics;
-#if ANDROID
-using Android.Service.Voice;
-#endif
 using SHAREAZ.Services;
 namespace SHAREAZ;
 
 public partial class MainPage : ContentPage
 {
-
 	public MainPage()
 	{
 		InitializeComponent();
@@ -15,34 +11,53 @@ public partial class MainPage : ContentPage
 
 	private async void  OnClickSend(object sender, EventArgs e)
 	{
+        ChangeControlButtonAccessability();
         try
         {
             FileResult fileResult = await FilePicker.PickAsync();
             if (fileResult != null)
             {
-                Debug.WriteLine("Selected file: " + fileResult.FullPath);
-                FileSender.Send(GetSelectedClient(), fileResult.FullPath);
-                // You can use fileResult.FileName and fileResult.Stream to access the selected file's information and data.
-                // Example: string fileName = fileResult.FileName; Stream fileStream = await fileResult.OpenReadAsync();
+                await FileSender.Send(ChangeProgressValue, GetSelectedClient(), fileResult.FullPath);
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            // Handle any errors that might occur during file selection.
+        }
+        finally
+        {
+            ChangeControlButtonAccessability();
         }
     }
-    private void OnClickReceive(object sender, EventArgs e)
+    private async void OnClickReceive(object sender, EventArgs e)
     {
+        ChangeControlButtonAccessability();
         string downloadFolderPath = GetDownloadsFolderPath();
         try
         {
-            FileReceiver.Receive(downloadFolderPath);
+            await FileReceiver.Receive(ChangeProgressValue, downloadFolderPath);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
+        finally
+        {
+            ChangeControlButtonAccessability();
+        }
+    }
+    private void ChangeProgressValue(double value)
+    {
+        progress.Progress = value;
+        progressText.Text = $"{value:P2}";
+    }
+
+    private void ChangeControlButtonAccessability()
+    {
+        progressText.IsVisible = !progressText.IsVisible;
+        progress.IsVisible = !progress.IsVisible;
+        SendBtn.IsEnabled = !SendBtn.IsEnabled;
+        ReceiveBtn.IsEnabled = !ReceiveBtn.IsEnabled;
     }
 
     private string GetDownloadsFolderPath()
@@ -61,4 +76,3 @@ public partial class MainPage : ContentPage
         return clientIP.GetItemsAsArray()[clientIP.SelectedIndex];
     }
 }
-

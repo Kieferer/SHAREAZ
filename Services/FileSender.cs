@@ -1,5 +1,4 @@
-﻿//using Java.Nio.FileNio.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,17 +10,17 @@ namespace SHAREAZ.Services
 {
     public static class FileSender
     {
-        public static string PERCENTAGE = String.Empty;
         private readonly static int PORT = 9999;
-        public static void Send(string ipAddress, string filePath)
+        public static async Task Send(Action<double> updateProgressBar, string ipAddress, string filePath)
         {
             TcpClient client = new(ipAddress, PORT);
             FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             NetworkStream networkStream = client.GetStream();
 
             BinaryWriter binaryWriter = new BinaryWriter(networkStream);
+            long fileSize = fileStream.Length;
             binaryWriter.Write(Path.GetFileName(filePath));
-            binaryWriter.Write(fileStream.Length);
+            binaryWriter.Write(fileSize);
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -30,16 +29,18 @@ namespace SHAREAZ.Services
             stopwatch.Start();
             while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
             {
-                Debug.WriteLine(totalBytesRead);
-                networkStream.Write(buffer, 0, bytesRead);
+                await networkStream.WriteAsync(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                double progressPercentage = (double)totalBytesRead / fileStream.Length * 100;
-                PERCENTAGE = $"{progressPercentage:F2}%";
+                double percentage = (double)totalBytesRead / fileSize;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    updateProgressBar(percentage);
+                });
             }
             stopwatch.Stop();
+            fileStream.Close();
             networkStream.Close();
-            Debug.WriteLine("File sending ended");
         }
     }
 }
