@@ -17,8 +17,7 @@ public partial class MainPage : ContentPage
             FileResult fileResult = await FilePicker.PickAsync();
             if (fileResult != null)
             {
-                Debug.WriteLine("Selected file: " + fileResult.FullPath);
-                FileSender.Send(progress, GetSelectedClient(), fileResult.FullPath);
+                await FileSender.Send(ChangeProgressValue, GetSelectedClient(), fileResult.FullPath);
             }
         }
         catch (Exception ex)
@@ -30,13 +29,13 @@ public partial class MainPage : ContentPage
             ChangeControlButtonAccessability();
         }
     }
-    private void OnClickReceive(object sender, EventArgs e)
+    private async void OnClickReceive(object sender, EventArgs e)
     {
         ChangeControlButtonAccessability();
         string downloadFolderPath = GetDownloadsFolderPath();
         try
         {
-            FileReceiver.Receive(progress, downloadFolderPath);
+            await FileReceiver.Receive(ChangeProgressValue, downloadFolderPath);
         }
         catch (Exception ex)
         {
@@ -47,9 +46,15 @@ public partial class MainPage : ContentPage
             ChangeControlButtonAccessability();
         }
     }
+    private void ChangeProgressValue(double value)
+    {
+        progress.Progress = value;
+        progressText.Text = $"{value: F2}%";
+    }
 
     private void ChangeControlButtonAccessability()
     {
+        progressText.IsVisible = !progressText.IsVisible;
         progress.IsVisible = !progress.IsVisible;
         SendBtn.IsEnabled = !SendBtn.IsEnabled;
         ReceiveBtn.IsEnabled = !ReceiveBtn.IsEnabled;

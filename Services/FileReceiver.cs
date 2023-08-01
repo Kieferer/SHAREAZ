@@ -1,21 +1,18 @@
-﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+﻿using Microsoft.Maui.Controls;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SHAREAZ.Services
 {
     public static class FileReceiver
     {
-        public static string PERCENTAGE_STRING;
-        public static double PERCENTAGE_DOUBLE;
         private readonly static int PORT = 9999;
-        public static async void Receive(ProgressBar progressBar, string saveDirectoryPath)
+
+        public static async Task Receive(Action<double> updateProgressBar, string saveDirectoryPath)
         {
             IPAddress ipAddress = IPAddress.Any;
             TcpListener listener = new(ipAddress, PORT);
@@ -44,12 +41,15 @@ namespace SHAREAZ.Services
                 await fileStream.WriteAsync(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                PERCENTAGE_DOUBLE = (double)totalBytesRead / fileSize * 100;
-                PERCENTAGE_STRING = $"{PERCENTAGE_DOUBLE:F2}%";
-                progressBar.Progress = PERCENTAGE_DOUBLE;
+                double percentage = (double)totalBytesRead / fileSize * 100;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    updateProgressBar(percentage);
+                });
             }
 
             stopwatch.Stop();
+            fileStream.Close();
             networkStream.Close();
         }
     }

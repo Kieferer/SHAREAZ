@@ -1,5 +1,4 @@
-﻿//using Java.Nio.FileNio.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,10 +10,8 @@ namespace SHAREAZ.Services
 {
     public static class FileSender
     {
-        public static string PERCENTAGE_STRING;
-        public static double PERCENTAGE_DOUBLE;
         private readonly static int PORT = 9999;
-        public static void Send(ProgressBar progressBar, string ipAddress, string filePath)
+        public static async Task Send(Action<double> updateProgressBar, string ipAddress, string filePath)
         {
             TcpClient client = new(ipAddress, PORT);
             FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -32,17 +29,18 @@ namespace SHAREAZ.Services
             stopwatch.Start();
             while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
             {
-                Debug.WriteLine(totalBytesRead);
-                networkStream.Write(buffer, 0, bytesRead);
+                await networkStream.WriteAsync(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                PERCENTAGE_DOUBLE = (double)totalBytesRead / fileSize * 100;
-                PERCENTAGE_STRING = $"{PERCENTAGE_DOUBLE:F2}%";
-                progressBar.Progress = PERCENTAGE_DOUBLE;
+                double percentage = (double)totalBytesRead / fileSize * 100;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    updateProgressBar(percentage);
+                });
             }
             stopwatch.Stop();
+            fileStream.Close();
             networkStream.Close();
-            Debug.WriteLine("File sending ended");
         }
     }
 }
