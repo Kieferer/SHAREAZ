@@ -1,13 +1,9 @@
 ﻿using System.Diagnostics;
-#if ANDROID
-using Android.Service.Voice;
-#endif
 using SHAREAZ.Services;
 namespace SHAREAZ;
 
 public partial class MainPage : ContentPage
 {
-
 	public MainPage()
 	{
 		InitializeComponent();
@@ -15,34 +11,48 @@ public partial class MainPage : ContentPage
 
 	private async void  OnClickSend(object sender, EventArgs e)
 	{
+        ChangeControlButtonAccessability();
         try
         {
             FileResult fileResult = await FilePicker.PickAsync();
             if (fileResult != null)
             {
                 Debug.WriteLine("Selected file: " + fileResult.FullPath);
-                FileSender.Send(GetSelectedClient(), fileResult.FullPath);
-                // You can use fileResult.FileName and fileResult.Stream to access the selected file's information and data.
-                // Example: string fileName = fileResult.FileName; Stream fileStream = await fileResult.OpenReadAsync();
+                FileSender.Send(progress, GetSelectedClient(), fileResult.FullPath);
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            // Handle any errors that might occur during file selection.
+        }
+        finally
+        {
+            ChangeControlButtonAccessability();
         }
     }
     private void OnClickReceive(object sender, EventArgs e)
     {
+        ChangeControlButtonAccessability();
         string downloadFolderPath = GetDownloadsFolderPath();
         try
         {
-            FileReceiver.Receive(downloadFolderPath);
+            FileReceiver.Receive(progress, downloadFolderPath);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
+        finally
+        {
+            ChangeControlButtonAccessability();
+        }
+    }
+
+    private void ChangeControlButtonAccessability()
+    {
+        progress.IsVisible = !progress.IsVisible;
+        SendBtn.IsEnabled = !SendBtn.IsEnabled;
+        ReceiveBtn.IsEnabled = !ReceiveBtn.IsEnabled;
     }
 
     private string GetDownloadsFolderPath()
@@ -61,4 +71,3 @@ public partial class MainPage : ContentPage
         return clientIP.GetItemsAsArray()[clientIP.SelectedIndex];
     }
 }
-
