@@ -49,7 +49,7 @@ public partial class MainPage : ContentPage
     private void ChangeProgressValue(double value)
     {
         progress.Progress = value;
-        progressText.Text = $"{value: F2}%";
+        progressText.Text = $"{value:P2}";
     }
 
     private void ChangeControlButtonAccessability()
