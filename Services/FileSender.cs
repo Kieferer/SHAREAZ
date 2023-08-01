@@ -32,7 +32,7 @@ namespace SHAREAZ.Services
                 await networkStream.WriteAsync(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                double percentage = (double)totalBytesRead / fileSize * 100;
+                double percentage = (double)totalBytesRead / fileSize;
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     updateProgressBar(percentage);
