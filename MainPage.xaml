@@ -8,38 +8,31 @@
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
-
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
-            <HorizontalStackLayout>
+            <Picker
+                x:Name="clientIP"
+                Title="Select client by IP address"
+                >
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>192.168.0.21</x:String>
+                        <x:String>192.168.0.13</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+            <HorizontalStackLayout
+                Spacing="25"
+                Padding="30,0"
+                VerticalOptions="Center">
                 <Button
-                    x:Name="CounterBtn"
+                    x:Name="SendBtn"
                     Text="Send"
-                    SemanticProperties.Hint="Counts the number of times you click"
-                    Clicked="OnCounterClicked"
+                    Clicked="OnClickSend"
                     HorizontalOptions="Center" />
-            
+                
                 <Button
                     x:Name="ReceiveBtn"
                     Text="Receive"
-                    SemanticProperties.Hint="Counts the number of times you click"
-                    Clicked="OnCounterClicked"
+                    Clicked="OnClickReceive"
                     HorizontalOptions="Center" />
             </HorizontalStackLayout>
 
