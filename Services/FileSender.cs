@@ -11,17 +11,19 @@ namespace SHAREAZ.Services
 {
     public static class FileSender
     {
-        public static string PERCENTAGE = String.Empty;
+        public static string PERCENTAGE_STRING;
+        public static double PERCENTAGE_DOUBLE;
         private readonly static int PORT = 9999;
-        public static void Send(string ipAddress, string filePath)
+        public static void Send(ProgressBar progressBar, string ipAddress, string filePath)
         {
             TcpClient client = new(ipAddress, PORT);
             FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             NetworkStream networkStream = client.GetStream();
 
             BinaryWriter binaryWriter = new BinaryWriter(networkStream);
+            long fileSize = fileStream.Length;
             binaryWriter.Write(Path.GetFileName(filePath));
-            binaryWriter.Write(fileStream.Length);
+            binaryWriter.Write(fileSize);
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -34,8 +36,9 @@ namespace SHAREAZ.Services
                 networkStream.Write(buffer, 0, bytesRead);
 
                 totalBytesRead += bytesRead;
-                double progressPercentage = (double)totalBytesRead / fileStream.Length * 100;
-                PERCENTAGE = $"{progressPercentage:F2}%";
+                PERCENTAGE_DOUBLE = (double)totalBytesRead / fileSize * 100;
+                PERCENTAGE_STRING = $"{PERCENTAGE_DOUBLE:F2}%";
+                progressBar.Progress = PERCENTAGE_DOUBLE;
             }
             stopwatch.Stop();
             networkStream.Close();
