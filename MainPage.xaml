@@ -19,6 +19,14 @@
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
+            <ProgressBar
+                x:Name="progress"
+                x:FieldModifier="Public"
+                Progress="0.0"
+                ProgressColor="Blue"
+                IsVisible="false"
+                />
+
             <HorizontalStackLayout
                 Spacing="25"
                 Padding="30,0"
