@@ -33,10 +33,8 @@ namespace SHAREAZ.Services
 
                 totalBytesRead += bytesRead;
                 double percentage = (double)totalBytesRead / fileSize;
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    updateProgressBar(percentage);
-                });
+
+                MainThread.BeginInvokeOnMainThread(() => updateProgressBar(percentage));
             }
             stopwatch.Stop();
             fileStream.Close();
