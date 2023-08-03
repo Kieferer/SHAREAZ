@@ -7,7 +7,14 @@
         <VerticalStackLayout
             Spacing="25"
             Padding="30,0"
-            VerticalOptions="Center">
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            >
+            <Image
+                Source="logo.png"
+                HeightRequest="128"
+                WidthRequest="128"
+                />
             <Picker
                 x:Name="clientIP"
                 Title="Select client by IP address"
@@ -33,7 +40,6 @@
 
             <HorizontalStackLayout
                 Spacing="25"
-                Padding="30,0"
                 VerticalOptions="Center">
                 <Button
                     x:Name="SendBtn"
