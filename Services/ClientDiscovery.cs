@@ -51,7 +51,10 @@ namespace SHAREAZ.Services
                     Debug.WriteLine("lListening");
                     byte[] bytes = listener.Receive(ref groupEP);
                     string receivedIP = Encoding.UTF8.GetString(bytes);
-                    Debug.WriteLine("Received IP: " + receivedIP);
+                    if (!receivedIP.Equals(GetLocalIPAddress()))
+                    {
+                        Debug.WriteLine("Received IP: " + receivedIP);
+                    }
                 }
             }
             finally
