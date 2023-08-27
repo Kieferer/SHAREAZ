@@ -10,10 +10,9 @@ namespace SHAREAZ.Services
 {
     public static class FileSender
     {
-        private readonly static int PORT = 9999;
-        public static async Task Send(Action<double> updateProgressBar, string ipAddress, string filePath)
+        public static async Task Send(Action<double> updateProgressBar, string ipAddress, int port, string filePath)
         {
-            TcpClient client = new(ipAddress, PORT);
+            TcpClient client = new(ipAddress, port);
             FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             NetworkStream networkStream = client.GetStream();
 
