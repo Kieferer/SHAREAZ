@@ -19,7 +19,10 @@ namespace SHAREAZ.Services
             udpClient = new UdpClient();
             udpClient.EnableBroadcast = true;
 
-            Thread broadcastThread = new Thread(BroadcastLocalIP);
+            Thread broadcastThread = new Thread(BroadcastLocalIP)
+            {
+                IsBackground = true
+            };
             broadcastThread.Start();
 
             ListenForBroadcasts();
