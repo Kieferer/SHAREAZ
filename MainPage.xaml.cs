@@ -9,6 +9,7 @@ public partial class MainPage : ContentPage
 	{
 		InitializeComponent();
         portEntry.Text = PORT.ToString();
+        ClientDiscovery.StartDiscovery();
     }
 
 	private async void  OnClickSend(object sender, EventArgs e)
