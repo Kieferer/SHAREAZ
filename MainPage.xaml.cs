@@ -4,9 +4,11 @@ namespace SHAREAZ;
 
 public partial class MainPage : ContentPage
 {
+    private static readonly int PORT = 9163;
 	public MainPage()
 	{
 		InitializeComponent();
+        portEntry.Text = PORT.ToString();
     }
 
 	private async void  OnClickSend(object sender, EventArgs e)
@@ -17,7 +19,7 @@ public partial class MainPage : ContentPage
             FileResult fileResult = await FilePicker.PickAsync();
             if (fileResult != null)
             {
-                await FileSender.Send(ChangeProgressValue, GetSelectedClient(), fileResult.FullPath);
+                await FileSender.Send(ChangeProgressValue, ipEntry.Text, PORT, fileResult.FullPath);
             }
         }
         catch (Exception ex)
@@ -35,7 +37,7 @@ public partial class MainPage : ContentPage
         string downloadFolderPath = GetDownloadsFolderPath();
         try
         {
-            await FileReceiver.Receive(ChangeProgressValue, downloadFolderPath);
+            await FileReceiver.Receive(PORT, ChangeProgressValue, downloadFolderPath);
         }
         catch (Exception ex)
         {
@@ -69,10 +71,5 @@ public partial class MainPage : ContentPage
         #else
                 throw new PlatformNotSupportedException("Platform not supported.");
         #endif
-    }
-
-    private string GetSelectedClient()
-    {
-        return clientIP.GetItemsAsArray()[clientIP.SelectedIndex];
     }
 }

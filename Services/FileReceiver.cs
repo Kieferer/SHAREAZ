@@ -10,12 +10,11 @@ namespace SHAREAZ.Services
 {
     public static class FileReceiver
     {
-        private readonly static int PORT = 9999;
 
-        public static async Task Receive(Action<double> updateProgressBar, string saveDirectoryPath)
+        public static async Task Receive(int port, Action<double> updateProgressBar, string saveDirectoryPath)
         {
             IPAddress ipAddress = IPAddress.Any;
-            TcpListener listener = new(ipAddress, PORT);
+            TcpListener listener = new(ipAddress, port);
             listener.Start();
 
             TcpClient client = await listener.AcceptTcpClientAsync();
