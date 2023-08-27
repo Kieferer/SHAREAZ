@@ -15,17 +15,16 @@
                 HeightRequest="128"
                 WidthRequest="128"
                 />
-            <Picker
-                x:Name="clientIP"
-                Title="Select client by IP address"
-                >
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>192.168.0.21</x:String>
-                        <x:String>192.168.0.13</x:String>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
+            <VerticalStackLayout>
+                <Entry
+                    x:Name="ipEntry"
+                    Placeholder="Enter local IPV4 address of target client"   
+                 />
+                <Entry
+                    x:Name="portEntry"
+                    IsEnabled="False"
+                 />
+            </VerticalStackLayout>
             <Label
                 x:Name="progressText"
                 Text="0%"
