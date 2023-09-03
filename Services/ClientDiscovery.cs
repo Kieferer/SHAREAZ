@@ -12,20 +12,28 @@ namespace SHAREAZ.Services
         static UdpClient udpClient;
         static int broadcastPort = 12345;
         static int broadcastInterval = 5000;
-
+        static Thread discoveryThread;
         public static void StartDiscovery()
         {
             Debug.WriteLine("Start discovery");
-            udpClient = new UdpClient();
-            udpClient.EnableBroadcast = true;
+            Debug.WriteLine($"Broadcasting on: {GetLocalIPAddress()}");
 
-            Thread broadcastThread = new Thread(BroadcastLocalIP)
+            discoveryThread = new Thread(DiscoveryThreadMain)
             {
                 IsBackground = true
             };
-            broadcastThread.Start();
+            discoveryThread.Start();
+        }
 
-            ListenForBroadcasts();
+        private static void DiscoveryThreadMain()
+        {
+            while (true)
+            {
+                ListenForBroadcasts();
+                BroadcastLocalIP();
+
+                Thread.Sleep(broadcastInterval);
+            }
         }
 
         static void BroadcastLocalIP()
@@ -51,7 +59,7 @@ namespace SHAREAZ.Services
             {
                 while (true)
                 {
-                    Debug.WriteLine("lListening");
+                    Debug.WriteLine("Listening");
                     byte[] bytes = listener.Receive(ref groupEP);
                     string receivedIP = Encoding.UTF8.GetString(bytes);
                     if (!receivedIP.Equals(GetLocalIPAddress()))
@@ -68,19 +76,22 @@ namespace SHAREAZ.Services
 
         static string GetLocalIPAddress()
         {
-            string localIP = "";
+            string localIP = String.Empty;
+
             IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
             foreach (IPAddress ipAddress in localIPs)
             {
                 if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    localIP = ipAddress.ToString();
+                    string ipAddressString = ipAddress.ToString();
+                    localIP = ipAddressString;
                     break;
                 }
             }
 
             return localIP;
         }
+
     }
 }
